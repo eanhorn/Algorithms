@@ -1,0 +1,13 @@
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:sqrt,org.eclipse.launchbar.core.descriptorType.default\:sieve,org.eclipse.launchbar.core.descriptorType.default\:waterjugpuzzlecopy,org.eclipse.launchbar.core.descriptorType.default\:waterjugpuzzle,org.eclipse.launchbar.core.descriptorType.default\:testrbt
+eclipse.preferences.version=1
+org.eclipse.launchbar.core.descriptorType.default\:sieve/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:sqrt/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:sqrt/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:testrbt/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:waterjugpuzzle/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:waterjugpuzzle/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:waterjugpuzzlecopy/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:waterjugpuzzlecopy/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local

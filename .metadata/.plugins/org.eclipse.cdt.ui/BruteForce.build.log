@@ -1,0 +1,28 @@
+10:38:28 **** Incremental Build of configuration Default for project BruteForce ****
+make all 
+g++ -g -Wall -Werror -pedantic-errors -fmessage-length=0 nearestneighbor.cpp -o nearestneighbor
+nearestneighbor.cpp:18:8: error: expected member name or ';' after declaration specifiers
+                x{x_},  y{y_}; name{name_}
+                     ^
+nearestneighbor.cpp:18:18: error: function definition does not declare parameters
+                x{x_},  y{y_}; name{name_}
+                               ^
+nearestneighbor.cpp:19:2: error: expected member name or ';' after declaration specifiers
+        {}
+        ^
+nearestneighbor.cpp:18:4: error: expected '('
+                x{x_},  y{y_}; name{name_}
+                 ^
+nearestneighbor.cpp:18:7: error: expected ';' after expression
+                x{x_},  y{y_}; name{name_}
+                    ^
+                    ;
+nearestneighbor.cpp:18:5: error: expression result unused [-Werror,-Wunused-value]
+                x{x_},  y{y_}; name{name_}
+                  ^~
+6 errors generated.
+make: *** [all] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+
+10:38:29 Build Failed. 7 errors, 0 warnings. (took 1s.106ms)
+

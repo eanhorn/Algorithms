@@ -1,0 +1,6 @@
+17:07:13 **** Incremental Build of configuration Default for project AdventOfCode ****
+make all 
+g++ -g -std=c++11 -Wall -Werror -pedantic-errors -fmessage-length=0 day1.cpp -o day1
+
+17:07:14 Build Finished. 0 errors, 0 warnings. (took 1s.540ms)
+

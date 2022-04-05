@@ -1,0 +1,6 @@
+19:34:29 **** Incremental Build of configuration Default for project WaterJugPuzzleCopy ****
+make all 
+g++ -g -std=c++11 -Wall -Werror -pedantic-errors -fmessage-length=0 waterjugpuzzlecopy.cpp -o waterjugpuzzlecopy
+
+19:34:30 Build Finished. 0 errors, 0 warnings. (took 1s.298ms)
+

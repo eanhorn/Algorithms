@@ -1,0 +1,6 @@
+18:13:05 **** Incremental Build of configuration Default for project unique ****
+make all 
+g++ -g -Wall -Werror -pedantic-errors -fmessage-length=0 unique.cpp -o unique
+
+18:13:06 Build Finished. 0 errors, 0 warnings. (took 1s.119ms)
+

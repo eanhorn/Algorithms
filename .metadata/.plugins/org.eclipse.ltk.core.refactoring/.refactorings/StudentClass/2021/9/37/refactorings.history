@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move &apos;test_student.sh&apos; to &apos;StudentClass&apos;" description="Move &apos;test_student.sh&apos; to &apos;StudentClass&apos;" destination="/StudentClass" element1="/CPPAlgorithms/test_student.sh" flags="7" id="org.eclipse.ltk.core.refactoring.move.resources" resources="1" stamp="1631220657669" updateReferences="true"/>
+</session>

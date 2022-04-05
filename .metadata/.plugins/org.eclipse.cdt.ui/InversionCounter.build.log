@@ -1,0 +1,6 @@
+14:57:43 **** Incremental Build of configuration Default for project InversionCounter ****
+make all 
+g++ -O3 -std=c++11 -Wall -Werror -pedantic-errors -fmessage-length=0 inversioncounter.cpp -o inversioncounter
+
+14:57:44 Build Finished. 0 errors, 0 warnings. (took 1s.712ms)
+

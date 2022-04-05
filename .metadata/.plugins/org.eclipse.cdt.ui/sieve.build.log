@@ -1,0 +1,6 @@
+18:43:27 **** Incremental Build of configuration Default for project sieve ****
+make all 
+g++ -g -Wall -Werror -pedantic-errors -fmessage-length=0 sieve.cpp -o sieve
+
+18:43:28 Build Finished. 0 errors, 0 warnings. (took 1s.194ms)
+

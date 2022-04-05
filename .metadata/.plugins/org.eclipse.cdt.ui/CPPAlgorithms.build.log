@@ -1,0 +1,9 @@
+16:20:54 **** Incremental Build of configuration Default for project CPPAlgorithms ****
+make all 
+g++ -g -Wall -Werror -pedantic-errors -fmessage-length=0 sqrt.cpp student.cpp -o sqrt student
+g++: error: student: No such file or directory
+make: *** [makefile:7: all] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+
+16:20:55 Build Failed. 1 errors, 0 warnings. (took 585ms)
+

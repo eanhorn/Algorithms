@@ -1,0 +1,500 @@
+Red-Black Trees
+
+Binary Search Trees (BST) are nice because they allow finding a key in the
+BST in O(tree height).  Unfortunately the height of a BST is O(n) where n
+is the number of nodes in the BST.  For example, when inserting n numbers
+in increasing order, the BST will be completely unbalanced and have a
+height of n - 1.
+
+A Red-Black Tree (RBT) is a kind of BST that is self-balancing: for each
+node, the height of the left subtree and the height of the right subtree
+are within a factor of two.  This in turn guarantees that the height of the
+whole tree is always Θ(lg(n)).  This then guarantees that searching for a
+key in a RBT takes O(lg(n)).  To do this, the RBT insertion and deletion
+operations rearrange the shape of the tree as necessary (see below).
+
+
+Definition
+
+In a RBT, in addition to the data itself, the pointers to the left and
+right subtrees, and the pointer p to the parent (required), every node also
+has one extra bit of information describing the color of the node: red or
+black.
+
+In addition, the RBT must have the following properties (adapted from the
+CLRS book):
+
+1) Every node is either red or black.
+2) The root is black.
+3) Every null pointer is considered the same as a black node.
+4) If a node is red then both its children are black.
+5) For each node, all simple paths from the node to descendant leaves
+   contain the same number of black nodes.
+
+See Figure 13.1 in the CLRS book for an example.
+
+Note: a black node can have another black node as child.  This is the case
+when a path is short.  A long path will have an alternation of red and
+black nodes, because of property 4.  Since all paths starting at a given
+node towards the leaves have the same number of black nodes, a long path
+can then be at most twice as long as a short path, which in turn explains
+why a RBT has to be balanced.
+
+Insertion and deletion operations themselves work just like for ordinary
+BSTs but they must then be followed by some rotations and some node
+recoloring to ensure that the five properties listed above remain true
+after each operation.
+
+
+Rotations
+
+A Rotation is a kind of local tree operation that transforms a BST into
+another BST.  So rotations preserve the BST property (but they do not
+preserve all RBT properties).  Given three subtrees α, β, and γ of any size
+and two nodes x and y, the rotations work as follows:
+
+      y       right (clockwise) rotation        x
+     / \   -------------------------------->   / \
+    x   γ                                     α   y
+   / \     <--------------------------------     / \
+  α   β     left (counterclockwise) rotation    β   γ
+
+See also Figure 13.2 in the CLRS book and the Wikipedia animation on
+Canvas.
+
+Here if CLRS code for doing a left rotation:
+
+LEFT-ROTATE(T, x)
+    y = x.right            // Definition of y.
+    x.right = y.left       // Turn y's left subtree β into x's right subtree.
+    if y.left != null      // If β is not empty then
+        y.left.p = x       // the parent of β becomes x.
+    y.p = x.p              // The parent of x is now also the parent of y.
+    if x.p == null         // If x is the root of the tree then
+        T.root = y         // y now becomes the root.
+    else if x == x.p.left  // If x is the left subtree of its parent then
+        x.p.left = y       // y now becomes the left subtree of the parent,
+    else x.p.right = y     // otherwise y becomes the right subtree.
+    y.left = x             // Put x on y’s left.
+    x.p = y                // y is now the parent of x.
+
+Here is how the code works with an example where β is the left child of y
+which is the right child of x which is the left child of P.  Dashed lines
+are used for parent pointers and solid lines are used for left and right
+pointers to the children.  Since the LEFT-ROTATE function only takes x as
+argument (and T, which is a data structure containing a pointer to the root
+of the tree), we first execute "y = x.right" to define y to be the right
+child of x (y must be the right child if we want to do a left rotation):
+
+          .-->P
+          .  /
+          . /
+          ./
+      .-->x<--.
+      .  / \  .
+      . /   \ .
+      ./     \.
+      α   .-->y<--.
+          .  / \  .
+          . /   \ .
+          ./     \.
+          β       γ
+
+Note that the BST property requires that all the values in α are less than
+x, all the values in β are between x and y, and all the values in γ are
+bigger than y: α < x < β < y < γ.
+
+By executing "x.right = y.left", the left subtree β of y then becomes the
+right subtree of x too:
+
+          .-->P
+          .  /
+          . /
+          ./
+      .-->x<----------.
+      .  / \          .
+      . /   \         .
+      ./     \        .
+      α       \   .-->y<--.
+               \  .  / \  .
+                \ . /   \ .
+                 \./     \.
+                  β       γ
+
+Using the test "if y.left != null" we check whether β is the empty tree or
+not.  Assuming β is not empty (since it has a parent pointer in our
+drawing), we then execute "y.left.p = x" to change the parent of β from y
+to x:
+
+          .-->P
+          .  /
+          . /
+          ./
+      .-->x<------+---.
+      .  / \      .   .
+      . /   \     .   .
+      ./     \    .   .
+      α       \   .   y<--.
+               \  .  / \  .
+                \ . /   \ .
+                 \./     \.
+                  β       γ
+
+By doing "y.p = x.p", the parent P of x also becomes the parent of y.
+(Note that if x is the root of the tree then x.p is the null pointer, so
+y's parent pointer becomes null too.)
+
+          .-->P<--.
+          .  /    .
+          . /     .
+          ./      .
+      .-->x<--.   y<--.
+      .  / \  .  / \  .
+      . /   \ . /   \ .
+      ./     \./     \.
+      α       β       γ
+
+We then execute "x.p == null" to check whether x is the root of the tree or
+not.  If x is the root of the tree then by executing "T.root = y" we now
+make y the root of the tree.  In our example here x is not the root of the
+tree (since x is the left child of P) so "if x.p == null" is false and then
+"if x == x.p.left" is true.  We then execute "x.p.left = y" to change the
+left pointer of P to point at y, so y becomes the left child of P:
+
+          .-------+-->P
+          .       .  /
+          .       . /
+          .       ./
+      .-->x<--.   y<--.
+      .  / \  .  / \  .
+      . /   \ . /   \ .
+      ./     \./     \.
+      α       β       γ
+
+(Otherwise, if x is neither the root of the tree nor the left child of P
+then it must be the right child of P and we execute "x.p.right = y" to
+change the right pointer of P to point at y, so y becomes the right child
+of P.)
+
+Next we execute "y.left = x" to make x the left child of y:
+
+              .---+-->P
+              .   .  /
+              .   . /
+              .   ./
+              .   y<--.
+              .  / \  .
+              . /   \ .
+              ./     \.
+          .-->x<--.   γ
+          .  / \  .
+          . /   \ .
+          ./     \.
+          α       β
+
+And finally we execute "x.p = y" to update x's parent pointer to indicate
+that y is now the parent of x:
+
+                  .-->P
+                  .  /
+                  . /
+                  ./
+              .-->y<--.
+              .  / \  .
+              . /   \ .
+              ./     \.
+          .-->x<--.   γ
+          .  / \  .
+          . /   \ .
+          ./     \.
+          α       β
+
+The left rotation is then finished and β is now the right child of x which
+is the left child of y which is the left child of P.
+
+Note that β is still in-between x and y, α is still on the left of x, and γ
+is still on the right of y, so the rotation has preserved the BST property
+α < x < β < y < γ and the tree after the rotation is therefore still a BST.
+ 
+Symmetrically for a right rotation.
+
+Since we are just modifying a finite number of pointers, doing a rotation
+takes constant time: Θ(1).
+
+
+Insertion
+
+Insertion into a RBT works exactly like for a BST, except that after the
+insertion is done, some node recoloring and some rotations need be
+performed to ensure that the resulting tree is still a RBT.
+
+RB-INSERT(T, z)
+    y = null
+    x = T.root
+    while x != null
+        y = x
+        if z.key < x.key
+            x = x.left
+        else x = x.right
+    z.p = y
+    if y == null
+        T.root = z
+    else if z.key < y.key
+        y.left = z
+    else y.right = z
+    z.left = null
+    z.right = null
+    z.color = RED
+    RB-INSERT-FIXUP(T, z)
+
+To insert the new node z into the tree, we use x to represent the current
+node and y to represent the parent of the current node.  We then do a
+search in the tree until x becomes null, at which point we know that z must
+be inserted below y.  Node y becomes the parent of z and z becomes the left
+or right child of y, as appropriate (or z becomes the root of the tree if
+the tree was empty).  Node z is then a leaf (no children) and is ALWAYS
+colored red.  The code then calls RB-INSERT-FIXUP to restore any RBT
+property that has now been violated by the insertion.
+
+
+Before we look at how to fix the tree after insertion, first let's look at
+which of the five properties of a RBT can be violated by an insertion.
+
+Properties 1 ("Every node is either red or black.") and 3 ("Every null
+pointer is considered the same as a black node.") are obviously not
+violated.  Neither is property 5 ("For each node, all simple paths from the
+node to descendant leaves contain the same number of black nodes.") since
+the newly inserted red node z replaces a black null pointer in its parent y
+and z itself has for its own children two null pointers that are considered
+black, so any path that now includes z still has the same number of black
+nodes / black pointers.
+
+Only property 2 ("The root is black.") can be violated when inserting z
+into an empty tree, and property 4 ("If a node is red then both its
+children are black.)" when inserting z below a node y which is already red.
+Note also that both properties cannot be violated at the same time, it's
+either one or the other but not both.  See for example Figure 13.4.a in the
+CLRS book for a violation of property 4.
+
+A violation of property 2 is easy to fix: just make the root black again.
+
+To fix a violation of property 4 in the tree, there are then six possible
+cases, but because of left-right symmetry, we only really need to
+understand three of them.  Also note that:
+- z is red (because we gave it the color red when inserting z)
+- z's parent is red (otherwise there would not be a violation of property 4)
+- z's grandparent exists and is black (because we started with a RBT)
+
+
+Case 1: z's uncle y is red (Figure 13.5)
+
+We then color z's parent and z's uncle black and z's grandparent red (which
+preserves property 5).  This might result in a new violation of property 4
+for z's grandparent so we change z to now be the grandparent (z moves up
+two levels) and repeat the whole process.
+
+    while z.p.color == RED
+        if z.p == z.p.p.left            // If z's parent is a left child
+            y = z.p.p.right             // then z's uncle y is the right child
+            if y.color == RED
+                z.p.color = BLACK       // case 1
+                y.color = BLACK         // case 1
+                z.p.p.color = RED       // case 1
+                z = z.p.p               // case 1
+    [...]
+
+Important note: in the code above, z's uncle y might actually be a null
+pointer, which is considered to have the color black, so in that case
+y.color does not exist but the "if" test should still work and is
+considered to compute false.
+
+
+Case 2: z's uncle y is black and z is a right child (Figure 13.6)
+
+We then change z to be z's parent (z moves up one level) and do a left
+rotation of this new z (z then moves down one level again).  The resulting
+tree then always matches case 3 below (so case 2 is always immediately
+followed by case 3).
+
+                if z == z.p.right
+                    z = z.p             // case 2
+                    LEFT-ROTATE(T, z)   // case 2
+
+
+Case 3: z's uncle y is black and z is a left child (Figure 13.6)
+
+We then color z's parent black, color z's grandparent red, and do a right
+rotation of z's grandparent (z then moves up one level).
+
+                z.p.color = BLACK       // case 3
+                z.p.p.color = RED       // case 3
+                RIGHT-ROTATE(T, z.p.p)  // case 3
+
+After we are done with case 3, the parent of z is now black and the whole
+process will not need to be repeated again (the test of the "while" loop
+below will then become false).
+
+
+Here is the complete code:
+
+RB-INSERT-FIXUP(T, z)
+    while z.p.color == RED
+        if z.p == z.p.p.left
+            y = z.p.p.right
+            if y.color == RED
+                z.p.color = BLACK       // case 1
+                y.color = BLACK         // case 1
+                z.p.p.color = RED       // case 1
+                z = z.p.p               // case 1
+            else
+                if z == z.p.right
+                    z = z.p             // case 2
+                    LEFT-ROTATE(T, z)   // case 2
+                z.p.color = BLACK       // case 3
+                z.p.p.color = RED       // case 3
+                RIGHT-ROTATE(T, z.p.p)  // case 3
+        else (same as then clause with "right" and "left" exchanged)
+T.root.color = BLACK
+
+Note that there are six cases in total, three in the "if z.p == z.p.p.left"
+part (when z's parent is a left child) and three more in the "else" part of
+that "if" (when z's parent is a right child) which are not shown here.
+
+Note also that case 2 falls through into case 3, as explained above.
+
+Important note: in the code above, z's parent might actually be a null
+pointer, which is considered to have the color black, so in that case
+z.p.color does not exist but the "while" test should still work and is
+considered to compute false and the "while" loop stops.
+
+
+Figure 13.4 in the CLRS book shows a complete example:
+
+a) We insert 4 into the RBT, using a new node z.  Property 4 is then
+violated at node 5, which is red and has now a red child 4.  z's uncle node
+8 is red, so we are in case 1: we make nodes 5 and 8 black and node 7 red.
+
+b) Property 4 is now violated at node 2, which is red and has now a red
+child 7.  z's uncle is node 14 which is black and z is the right child of
+node 2, so we are in case 2: we change z to be z's parent 2 and do a left
+rotation at node 2.
+
+c) Property 4 is now violated at node 7, which is read and has now a red
+child 2.  z's uncle is node 14 which is black and z is the left child of
+node 7, so we are in case 3: we make node 7 black, node 11 red, and do a
+right rotation at node 11.
+
+z is node 2 and z's parent is node 7, which is black, and the main "while"
+loop then stops.  The root of the tree is then changed to black (which it
+already is; this matters only when adding a node into an empty tree) and
+the result is now a BST that respects all five RBT properties, so it is a
+RBT again.
+
+
+In case 1, z moves up two levels.  In case 3, z moves up one level and the
+whole process then stops.  In case 2, z does not move up or down, but then
+case 2 is always followed by case 3, which moves z up by one level and the
+whole process then stops.  So the whole process is repeated over and over
+again only in case 1, z then moves up in the tree in jumps of two levels,
+until z's parent becomes black or the root of the tree is reached, at which
+point fixing up the tree is over.  The running time for fixing the tree is
+therefore O(tree height).  At most two rotations are required.
+
+
+Deletion
+
+Deleting a node from a RBT is more complicated than inserting a node:
+deleting a node from a BST is already more complicated than inserting, and
+then fixing the tree to restore the RBT properties requires looking at 8
+different possible cases (4 cases, plus 4 symmetric ones).  Details are in
+the CLRS book if you are interested.
+
+
+Insertion and deletion in a RBT can be nicely visualized here:
+https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
+
+
+Height of a Red-Black Tree
+
+The search, insert, and delete operations on a RBT all take O(tree height).
+Here we want to prove that the height of a RBT is Θ(lg(n)) where n is the
+number of nodes (size) of the tree.
+
+To do this, we start by defining the "black height" bh(x) of a node x as:
+the number of black nodes on any simple path from, but not including, node
+x down to a leaf.  The black height of the whole tree is then the black
+height of the root node.
+
+Remember property 5 of a RBT: for each node, all simple paths from the node
+to descendant leaves contain the same number of black nodes.  Therefore
+bh(x) is the same regardless of which path you follow down from x to a leaf
+below x.  Therefore the function bh(x) is well defined.
+
+See Figure 13.1.a for an example.  Note that null pointers are considered
+black and therefore all the leaves of the RBT have a black height of 1, not
+zero (it does not matter whether the leaf itself is black or not because
+the definition of the bh function excludes x itself from the path used to
+compute the black height of x).
+
+
+We start by proving that a tree with root x contains at least 2^bh(x) - 1
+nodes.  The proof is by induction on the height of x.  (This proof is
+slightly different from the one in the CLRS book because this proof uses
+the normal height, not the height that includes null pointers as done in
+the CLRS book.)
+
+If x has a height of zero then x is a leaf.  For any leaf x, bh(x) = 1, as
+explained above.  Then 2^bh(x) - 1 = 2^1 - 1 = 1, which is the correct
+number of nodes since there is just a leaf.
+
+In general, assume node x has some positive height h, and has two children.
+If a child of x is red then it has the same black height bh(x) as x itself;
+if a child of x is black then it has a black height of bh(x) - 1.  This is
+a direct consequence of the definition of the bh function.  So the children
+of x have at least a black height of bh(x) - 1.
+
+Since the height of the children of x is h - 1, we apply the induction
+hypothesis to conclude that the subtree rooted at each child has at least
+2^(bh(x)-1) - 1 nodes.  So the tree rooted at x has at least (2^(bh(x)-1) - 1)
++ (2^(bh(x)-1) - 1) + 1 = 2 * 2^(bh(x)-1) - 1 = 2^bh(x) - 1 nodes, which
+completes the proof by induction.
+
+So for a RBT with n nodes and root x, we have n ≥ 2^bh(x) - 1.
+
+
+According to property 4 of a RBT, the children of a red node must be
+black.  In a path from the root to a leaf, this forces the number of red
+nodes to be at most half of the number of nodes in the path, and therefore
+forces the number of black nodes to be at least half of the number of nodes
+in the path.  Therefore bh(x) must be at least h/2.
+
+(Put another way, for a given value of bh(x), say 3, the shortest path from
+the root x to a leaf will have three black nodes only, and the longest path
+will have three black nodes and three red nodes that are alternating, so
+the longest path is at most twice as long as the shortest path, so the
+height h of x is at most twice bh(x), so bh(x) is at least h/2; see Figure
+13.1.a in the CLRS book.)
+
+So for a RBT with n nodes and root x, we have n ≥ 2^bh(x) - 1 ≥ 2^(h/2) - 1.
+Since n ≥ 2^(h/2) - 1 we then get: 2 * lg(n + 1) ≥ h.
+
+This shows that the height of a RBT is O(lg(n)) where n is the number of
+nodes (size) of the tree.  Since a RBT is a binary tree, the height must
+also be Ω(lg(n)).  Therefore the height of a RBT is Θ(lg(n)).  Therefore
+the search, insert, and delete operations on a RBT can be done in O(lg(n)).
+
+
+Comparison with AVL Trees
+
+Both RBTs and AVL trees are kinds of balanced trees with height Θ(lg(n)).
+The difference is that in an AVL tree, the heights of the left and right
+subtrees can differ at most by one, while in a RBT the heights of the left
+and right subtrees can differ at most by a factor a two.  So RBTs are
+balanced but not as strictly as AVL trees.  This means that RBTs will
+require on average fewer rotations when inserting / deleting values, but
+will be slightly slower than AVL trees on average when searching for
+values.
+
+Operations on both kinds of trees are O(lg(n)) but in RBTs the constant in
+front of the lg(n) will be slightly smaller for insertion and deletion and
+slightly higher for searching, compared to AVL trees.
